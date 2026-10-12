@@ -1,0 +1,24 @@
+@model IReadOnlyList<ToeicAdmin.Models.Exam>
+@{
+    ViewData["Title"] = "Quản lý đề thi";
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div><h1 class="h3 mb-1">Quản lý đề thi</h1><div class="text-secondary">Nhập đề Word, rà soát câu hỏi và công bố cho người học.</div></div>
+</div>
+@if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
+@if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+<div class="card shadow-sm border-0 mb-4"><div class="card-body p-4">
+    <h2 class="h5 mb-3">Nhập đề thi từ Word</h2>
+    <form asp-action="Import" method="post" enctype="multipart/form-data" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div class="col-md-4"><label class="form-label" for="title">Tên đề thi</label><input class="form-control" id="title" name="title" placeholder="Ví dụ: TOEIC Reading Practice 01" /></div>
+        <div class="col-md-2"><label class="form-label" for="section">Phần thi</label><select class="form-select" id="section" name="section"><option value="Reading">Reading</option><option value="Listening">Listening</option></select></div><div class="col-md-4"><label class="form-label" for="file">Tệp đề thi (.docx)</label><input class="form-control" id="file" name="file" type="file" accept=".docx" required /></div>
+        <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit"><i class="bi bi-upload me-1"></i> Nhập đề</button></div>
+    </form>
+    <p class="small text-secondary mt-3 mb-0">Hệ thống đọc câu đánh số và lựa chọn A–D. Câu thiếu đáp án được lưu ở trạng thái chờ rà soát; nội dung Word có thể cần chỉnh lại trước khi công bố.</p>
+</div></div>
+<div class="card shadow-sm border-0"><div class="card-body p-0"><div class="table-responsive"><table class="table align-middle mb-0">
+    <thead class="table-light"><tr><th class="ps-4">Đề thi</th><th>Số câu</th><th>Thời lượng</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+    @foreach (var exam in Model) { <tr><td class="ps-4"><strong>@exam.Title</strong> <span class="badge text-bg-primary">@exam.Section</span><div class="small text-secondary">@exam.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div></td><td>@exam.Questions.Count</td><td>@exam.DurationMinutes phút</td><td>@if (exam.IsPublished) { <span class="badge text-bg-success">Đã công bố</span> } else { <span class="badge text-bg-warning">Bản nháp</span> }</td><td class="text-end pe-4"><a asp-action="Review" asp-route-id="@exam.Id" class="btn btn-sm btn-outline-primary">Rà soát nội dung</a></td></tr> }
+    @if (Model.Count == 0) { <tr><td colspan="5" class="text-center text-secondary py-5">Chưa có đề thi. Hãy nhập tệp Word ở phía trên.</td></tr> }
+    </tbody></table></div></div></div>

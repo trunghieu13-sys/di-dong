@@ -1,0 +1,18 @@
+@model ToeicAdmin.Controllers.AccountController.LoginInput
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+<div class="row justify-content-center py-5"><div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4"><div class="text-primary fs-1"><i class="bi bi-person-circle"></i></div><h1 class="h3">Đăng nhập</h1><p class="text-secondary mb-0">TOEIC Reading Practice</p></div>
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()<input type="hidden" asp-for="ReturnUrl" />
+            @if (TempData["Success"] is string message) { <div class="alert alert-success">@message</div> }
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3"><label asp-for="Email" class="form-label">Email</label><input asp-for="Email" class="form-control" type="email" autocomplete="username" required /><span asp-validation-for="Email" class="text-danger"></span></div>
+            <div class="mb-4"><label asp-for="Password" class="form-label">Mật khẩu</label><input asp-for="Password" class="form-control" type="password" autocomplete="current-password" required /><span asp-validation-for="Password" class="text-danger"></span></div>
+            <button class="btn btn-primary w-100" type="submit">Đăng nhập</button>
+        </form>
+        <div class="text-center mt-3"><span class="text-secondary">Chưa có tài khoản?</span> <a asp-action="Register">Đăng ký User</a></div>
+    </div></div>
+</div></div>

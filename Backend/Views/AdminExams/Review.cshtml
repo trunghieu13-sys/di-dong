@@ -1,0 +1,28 @@
+@model ToeicAdmin.Models.Exam
+@{
+    ViewData["Title"] = "Rà soát đề thi";
+    var questions = Model.Questions.OrderBy(q => q.Number).ToList();
+}
+<div class="mb-4"><a asp-action="Index" class="text-decoration-none">← Danh sách đề</a><h1 class="h3 mt-2 mb-1">@Model.Title</h1><div class="text-secondary">@questions.Count câu · 75 phút · Chọn đáp án đúng và kiểm tra nội dung trước khi công bố.</div></div>
+@if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
+@if (TempData["ImportSummary"] is string summary) { <div class="alert alert-info">@summary</div> }
+@if (TempData["Warnings"] is string warnings && !string.IsNullOrWhiteSpace(warnings)) { <div class="alert alert-warning"><strong>Các mục cần kiểm tra:</strong><ul class="mb-0 mt-2">@foreach (var warning in warnings.Split('|', StringSplitOptions.RemoveEmptyEntries)) { <li>@warning</li> }</ul></div> }
+<form asp-action="SaveReview" method="post">
+    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Id" />
+    @for (var i = 0; i < questions.Count; i++) { var q = questions[i];
+        <div class="card border-0 shadow-sm mb-3"><div class="card-body p-4">
+            <input type="hidden" name="questions[@i].Id" value="@q.Id" />
+            <div class="d-flex align-items-center gap-2 mb-3"><span class="badge text-bg-primary">PART @q.Part</span><strong>Câu @q.Number</strong>@if (q.NeedsReview) { <span class="badge text-bg-warning">Cần rà soát</span> }</div>
+            <label class="form-label" for="prompt-@q.Id">Nội dung câu hỏi</label><textarea class="form-control mb-3" rows="2" id="prompt-@q.Id" name="questions[@i].Prompt">@q.Prompt</textarea>
+            <div class="row g-2">
+                @foreach (var item in new[] { ("A", q.ChoiceA), ("B", q.ChoiceB), ("C", q.ChoiceC), ("D", q.ChoiceD) }) {
+                    <div class="col-lg-6"><label class="form-label small">Lựa chọn @item.Item1</label><input class="form-control" name="questions[@i].Choice@item.Item1" value="@item.Item2" /></div>
+                }
+            </div>
+            <fieldset class="mt-3"><legend class="form-label fs-6">Đáp án đúng</legend><div class="d-flex gap-4">
+                @foreach (var key in new[] { "A", "B", "C", "D" }) { <label class="form-check"><input class="form-check-input" type="radio" name="questions[@i].CorrectAnswer" value="@key" checked="@(q.CorrectAnswer == key)" /><span class="form-check-label">@key</span></label> }
+            </div></fieldset>
+        </div></div>
+    }
+    <div class="d-flex justify-content-end gap-2 mb-5"><button name="publish" value="false" class="btn btn-outline-secondary" type="submit">Lưu bản nháp</button><button name="publish" value="true" class="btn btn-primary" type="submit">Lưu và công bố</button></div>
+</form>

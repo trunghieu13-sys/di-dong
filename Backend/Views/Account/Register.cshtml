@@ -1,0 +1,18 @@
+@model ToeicAdmin.Controllers.AccountController.RegisterInput
+@{
+    ViewData["Title"] = "Đăng ký User";
+}
+<div class="row justify-content-center py-5"><div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4"><div class="text-primary fs-1"><i class="bi bi-person-plus"></i></div><h1 class="h3">Tạo tài khoản</h1><p class="text-secondary mb-0">Đăng ký tài khoản luyện thi TOEIC</p></div>
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3"><label asp-for="DisplayName" class="form-label">Họ và tên</label><input asp-for="DisplayName" class="form-control" autocomplete="name" required /><span asp-validation-for="DisplayName" class="text-danger"></span></div>
+            <div class="mb-3"><label asp-for="Email" class="form-label">Email</label><input asp-for="Email" class="form-control" type="email" autocomplete="email" required /><span asp-validation-for="Email" class="text-danger"></span></div>
+            <div class="mb-4"><label asp-for="Password" class="form-label">Mật khẩu</label><input asp-for="Password" class="form-control" type="password" autocomplete="new-password" minlength="8" required /><span asp-validation-for="Password" class="text-danger"></span><div class="form-text">Tối thiểu 8 ký tự.</div></div>
+            <button class="btn btn-primary w-100" type="submit">Đăng ký</button>
+        </form>
+        <div class="text-center mt-3"><a asp-action="Login">Quay lại đăng nhập</a></div>
+    </div></div>
+</div></div>
